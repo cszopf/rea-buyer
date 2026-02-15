@@ -45,3 +45,24 @@ export const REAL_PROPERTY_MOCK = {
   lender: "LOWER, LLC",
   closingDate: "11/18/2025"
 };
+
+export const PREFERRED_LENDERS = [
+  {
+    name: 'LOWER, LLC',
+    tagline: 'Fast Digital Closing',
+    description: 'Specializing in high-velocity tech-enabled closings. Preferred WCT partner.',
+    logo: 'L'
+  },
+  {
+    name: 'CHASE HOME LENDING',
+    tagline: 'Institutional Stability',
+    description: 'Local Powell underwriting with national resource support.',
+    logo: 'C'
+  },
+  {
+    name: 'ROCKET MORTGAGE',
+    tagline: 'Streamlined Approval',
+    description: 'Verified digital income and asset verification for rapid pre-approval.',
+    logo: 'R'
+  }
+];

@@ -13,21 +13,21 @@ const AgentTransparencyView: React.FC<AgentTransparencyViewProps> = ({ brand, cu
 
   // Milestones as per spec
   const milestones = [
-    { id: 1, label: "Identity Verified", responsible: "Buyer", status: currentStep > 2 ? 'complete' : currentStep === 2 ? 'active' : 'pending', time: "Feb 14, 9:42 AM" },
-    { id: 2, label: "Contract Received", responsible: "Agent", status: currentStep >= 1 ? 'complete' : 'pending', time: "Feb 14, 8:00 AM" },
-    { id: 3, label: "Title Search Ordered", responsible: "Title", status: currentStep >= 4 ? 'complete' : currentStep === 3 ? 'active' : 'pending', time: "Feb 15, 10:00 AM" },
-    { id: 4, label: "Title Review Complete", responsible: "Title", status: currentStep >= 5 ? 'complete' : currentStep === 4 ? 'active' : 'pending' },
-    { id: 5, label: "Earnest Money Received", responsible: "Buyer", status: currentStep >= 3 ? 'complete' : 'waiting', note: "Awaiting Bank Verification" },
-    { id: 6, label: "Loan Status: Approved", responsible: "Lender", status: currentStep >= 7 ? 'complete' : 'pending' },
-    { id: 7, label: "Closing Scheduled", responsible: "Title", status: currentStep >= 6 ? 'complete' : 'pending' },
-    { id: 8, label: "Closing Complete", responsible: "Title", status: currentStep >= 8 ? 'complete' : 'pending' },
+    { id: 1, label: "Contract Received", responsible: "Agent", status: currentStep >= 1 ? 'complete' : 'pending', time: "Feb 14, 8:00 AM" },
+    { id: 2, label: "Lender Confirmed", responsible: "Buyer", status: currentStep > 2 ? 'complete' : currentStep === 2 ? 'active' : 'pending', time: "Feb 14, 8:45 AM" },
+    { id: 3, label: "Identity Verified", responsible: "Buyer", status: currentStep > 3 ? 'complete' : currentStep === 3 ? 'active' : 'pending', time: "Feb 14, 9:42 AM" },
+    { id: 4, label: "Title Search Ordered", responsible: "Title", status: currentStep >= 5 ? 'complete' : currentStep === 4 ? 'active' : 'pending', time: "Feb 15, 10:00 AM" },
+    { id: 5, label: "Earnest Money Received", responsible: "Buyer", status: currentStep >= 4 ? 'complete' : 'waiting', note: "Awaiting Bank Verification" },
+    { id: 6, label: "Loan Status: Approved", responsible: "Lender", status: currentStep >= 8 ? 'complete' : currentStep >= 2 ? 'active' : 'pending' },
+    { id: 7, label: "Closing Scheduled", responsible: "Title", status: currentStep >= 7 ? 'complete' : 'pending' },
+    { id: 8, label: "Closing Complete", responsible: "Title", status: currentStep >= 9 ? 'complete' : 'pending' },
   ];
 
   const activityLog = [
+    { event: "Lender order received & verified", time: "Feb 19, 11:20 AM", role: "Lender" },
     { event: "Title commitment issued", time: "Feb 18, 4:33 PM", role: "Title" },
     { event: "Earnest money initiated", time: "Feb 15, 2:10 PM", role: "Buyer" },
     { event: "Buyer completed identity verification", time: "Feb 14, 9:42 AM", role: "Buyer" },
-    { event: "File opened & compliance review started", time: "Feb 14, 8:00 AM", role: "Title" },
   ];
 
   const getStatusColor = (status: string) => {
@@ -125,7 +125,7 @@ const AgentTransparencyView: React.FC<AgentTransparencyViewProps> = ({ brand, cu
                  <div className="p-6 border-b border-slate-50 bg-slate-50/30">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Live Funding Status</p>
                     <FinancialRow label="Earnest Money" status="Cleared" timestamp="Feb 15, 2:10 PM" />
-                    <FinancialRow label="Down Payment" status="Pending" />
+                    <FinancialRow label="Lender Order" status="Cleared" timestamp="Feb 19, 11:20 AM" />
                     <FinancialRow label="Closing Wire" status="Scheduled" />
                  </div>
                  <div className="p-4 bg-blue-50/20 text-center">

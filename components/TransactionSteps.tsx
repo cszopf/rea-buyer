@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { TransactionStep, BrandConfig, Document, TitleIssue, ExperienceLevel } from '../types';
-import { REAL_PROPERTY_MOCK } from '../constants';
+import { REAL_PROPERTY_MOCK, PREFERRED_LENDERS } from '../constants';
 
 interface StepProps {
   step: TransactionStep;
@@ -40,10 +40,10 @@ const ExpectationBox: React.FC<{ title: string; description: string; estTime: st
 const StepHeader: React.FC<{ title: string; subtitle: string; brand: BrandConfig; stepNum: number }> = ({ title, subtitle, brand, stepNum }) => (
   <div className="mb-10">
     <div className="flex items-center gap-2 mb-2">
-      <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded text-slate-900" style={{ backgroundColor: brand.accentColor }}>Step {stepNum} of 8</span>
+      <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded text-slate-900" style={{ backgroundColor: brand.accentColor }}>Step {stepNum} of 9</span>
       <span className="text-xs font-bold text-slate-500">Transaction Phase</span>
     </div>
-    <h2 className="font-header uppercase-tracking-150 text-4xl mb-3" style={{ color: brand.primaryColor }}>
+    <h2 className="font-header uppercase-tracking-150 text-3xl md:text-4xl mb-3 leading-tight" style={{ color: brand.primaryColor }}>
       {title}
     </h2>
     <p className="font-subheader text-slate-600 text-lg leading-relaxed">
@@ -81,6 +81,7 @@ export const TransactionContent: React.FC<StepProps> = ({
   optInMortgage, setOptInMortgage 
 }) => {
   const [showWireInstructions, setShowWireInstructions] = useState(false);
+  const [financingPath, setFinancingPath] = useState<'choose' | 'existing' | 'shop' | 'new'>('choose');
 
   switch (step) {
     case TransactionStep.STARTED:
@@ -113,11 +114,115 @@ export const TransactionContent: React.FC<StepProps> = ({
         </div>
       );
 
-    case TransactionStep.IDENTITY:
+    case TransactionStep.FINANCING:
       return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
           <StepHeader 
             stepNum={2}
+            title="Financing Confirmation" 
+            subtitle="Confirm your lender details or compare rates with Smart Preferred Lenders." 
+            brand={brand} 
+          />
+          
+          {financingPath === 'choose' && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+              <PathCard 
+                title="Existing Lender" 
+                subtitle="Use the lender on your contract" 
+                icon="🏦"
+                onClick={() => setFinancingPath('existing')}
+              />
+              <PathCard 
+                title="Shop Rates" 
+                subtitle="Compare with Smart Partners" 
+                icon="📊"
+                onClick={() => setFinancingPath('shop')}
+              />
+              <PathCard 
+                title="New Approval" 
+                subtitle="Switch to a new pre-approval" 
+                icon="📝"
+                onClick={() => setFinancingPath('new')}
+              />
+            </div>
+          )}
+
+          {financingPath === 'existing' && (
+             <div className="space-y-6 animate-in fade-in duration-500">
+                <div className="bg-white border border-slate-200 p-8 rounded-3xl space-y-4">
+                   <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest border-b border-slate-100 pb-2">Lender Information</h4>
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-black text-slate-400 uppercase">Lender Name</label>
+                        <input type="text" defaultValue={REAL_PROPERTY_MOCK.lender} className="w-full p-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold" />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-black text-slate-400 uppercase">Loan Officer Email</label>
+                        <input type="email" placeholder="lo@lender.com" className="w-full p-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold" />
+                      </div>
+                   </div>
+                   <div className="pt-4">
+                      <label className="text-[10px] font-black text-slate-400 uppercase block mb-2">Upload Pre-Approval (Optional)</label>
+                      <div className="border-2 border-dashed border-slate-200 rounded-2xl p-8 text-center hover:border-blue-400 transition-colors cursor-pointer bg-slate-50/50">
+                         <svg className="w-8 h-8 text-slate-300 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                         </svg>
+                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Drop PDF or Click to Upload</p>
+                      </div>
+                   </div>
+                </div>
+                <div className="flex justify-between items-center bg-blue-50 border border-blue-100 p-4 rounded-2xl">
+                   <div className="flex gap-3 items-center">
+                      <span className="text-xl">🛡️</span>
+                      <p className="text-xs text-blue-800 font-bold">Lender details will be verified by WCT within 24 hours.</p>
+                   </div>
+                   <button onClick={() => setFinancingPath('choose')} className="text-[10px] font-black text-blue-600 uppercase">Change Path</button>
+                </div>
+                <NavActions onNext={onNext} onBack={() => setFinancingPath('choose')} brand={brand} nextLabel="Confirm & Continue" />
+             </div>
+          )}
+
+          {(financingPath === 'shop' || financingPath === 'new') && (
+            <div className="space-y-8 animate-in fade-in duration-500">
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {PREFERRED_LENDERS.map((l, i) => (
+                    <div key={i} className="bg-white border border-slate-100 p-6 rounded-[2rem] shadow-sm hover:shadow-xl transition-all cursor-pointer group hover:border-blue-600">
+                       <div className="flex justify-between items-start mb-4">
+                          <div className="w-12 h-12 bg-slate-900 text-white rounded-2xl flex items-center justify-center font-black text-xl shadow-lg">
+                             {l.logo}
+                          </div>
+                          <span className="bg-green-100 text-green-700 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter">Verified Rate</span>
+                       </div>
+                       <h5 className="text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors">{l.name}</h5>
+                       <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">{l.tagline}</p>
+                       <p className="text-xs text-slate-500 font-medium leading-relaxed mb-6">{l.description}</p>
+                       <button className="w-full py-3 bg-slate-50 border border-slate-100 rounded-xl text-[10px] font-black uppercase tracking-widest group-hover:bg-blue-600 group-hover:text-white transition-all">Request Quote</button>
+                    </div>
+                  ))}
+               </div>
+               <div className="flex justify-center">
+                  <button onClick={() => setFinancingPath('choose')} className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-1">Back to Path Selection</button>
+               </div>
+               <NavActions onNext={onNext} onBack={() => setFinancingPath('choose')} brand={brand} nextLabel="Continue with Current" />
+            </div>
+          )}
+
+          <ExpectationBox 
+            title="Lending Layer Transparency" 
+            estTime="Continuous" 
+            experienceLevel={experienceLevel}
+            description="We coordinate directly with your lender. Once we receive their closing instructions, Smart automatically maps their requirements to our title exam for absolute precision."
+            brand={brand}
+          />
+          {financingPath === 'choose' && <NavActions onNext={onNext} onBack={onBack} brand={brand} nextLabel="Confirm Path First" showBack={true} />}
+        </div>
+      );
+
+    case TransactionStep.IDENTITY:
+      return (
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <StepHeader 
+            stepNum={3}
             title="Verify Identity" 
             subtitle={`Secure Biometric verification required for ${REAL_PROPERTY_MOCK.buyerName}.`} 
             brand={brand} 
@@ -159,7 +264,7 @@ export const TransactionContent: React.FC<StepProps> = ({
       return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
           <StepHeader 
-            stepNum={3}
+            stepNum={4}
             title="Document Collection" 
             subtitle="Please review your current closing package. Securely view, download, or complete necessary filings below." 
             brand={brand} 
@@ -275,7 +380,7 @@ export const TransactionContent: React.FC<StepProps> = ({
       return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
           <StepHeader 
-            stepNum={4}
+            stepNum={5}
             title="Digital Title Examination" 
             subtitle="Our examiners have verified a clear path to ownership by reviewing 40+ years of public records." 
             brand={brand} 
@@ -315,7 +420,7 @@ export const TransactionContent: React.FC<StepProps> = ({
       return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
           <StepHeader 
-            stepNum={5}
+            stepNum={6}
             title="Curative Phase" 
             subtitle="We are finalizing the payoff and tax certificates to ensure a clean transfer." 
             brand={brand} 
@@ -349,7 +454,7 @@ export const TransactionContent: React.FC<StepProps> = ({
       return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
           <StepHeader 
-            stepNum={6}
+            stepNum={7}
             title="Signing Coordinator" 
             subtitle={`Closing is officially targeted for ${REAL_PROPERTY_MOCK.closingDate}. Please select your preferred signing environment.`} 
             brand={brand} 
@@ -659,6 +764,17 @@ export const TransactionContent: React.FC<StepProps> = ({
       return null;
   }
 };
+
+const PathCard = ({ title, subtitle, icon, onClick }: { title: string, subtitle: string, icon: string, onClick: () => void }) => (
+  <button 
+    onClick={onClick}
+    className="bg-white border border-slate-100 p-6 rounded-3xl text-left hover:border-slate-900 hover:shadow-2xl transition-all active:scale-[0.98] group"
+  >
+    <div className="text-3xl mb-4 grayscale group-hover:grayscale-0 transition-all">{icon}</div>
+    <p className="text-base font-black text-slate-900 mb-1 group-hover:text-blue-600 transition-colors tracking-tight uppercase">{title}</p>
+    <p className="text-xs text-slate-500 font-medium leading-snug">{subtitle}</p>
+  </button>
+);
 
 const InstructionRow = ({ label, value, masked }: { label: string, value: string, masked?: boolean }) => {
   const [isMasked, setIsMasked] = useState(masked);

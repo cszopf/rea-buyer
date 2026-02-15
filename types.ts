@@ -13,13 +13,14 @@ export interface BrandConfig {
 
 export enum TransactionStep {
   STARTED = 1,
-  IDENTITY = 2,
-  DOCUMENTS = 3,
-  SEARCH = 4,
-  CLEARING = 5,
-  SCHEDULE = 6,
-  SUMMARY = 7,
-  CLOSED = 8
+  FINANCING = 2,
+  IDENTITY = 3,
+  DOCUMENTS = 4,
+  SEARCH = 5,
+  CLEARING = 6,
+  SCHEDULE = 7,
+  SUMMARY = 8,
+  CLOSED = 9
 }
 
 export type ViewMode = 'buyer' | 'agent';
