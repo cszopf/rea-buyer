@@ -146,10 +146,11 @@ const App: React.FC = () => {
               />
             </div>
 
-            <div className="flex flex-col md:flex-row items-center justify-between border-t border-slate-100 pt-8 gap-4 mb-8">
+            {/* Centered mobile agent access button for mobile consistency */}
+            <div className="flex flex-col items-center text-center border-t border-slate-100 pt-8 gap-4 mb-8">
               <button 
                 onClick={toggleViewMode}
-                className="text-[9px] font-black text-slate-300 uppercase tracking-widest hover:text-slate-600 transition-colors border-b border-transparent hover:border-slate-300 pb-1"
+                className="text-[10px] font-black text-slate-300 uppercase tracking-widest hover:text-slate-600 transition-colors border-b border-transparent hover:border-slate-300 pb-1"
               >
                 Closer / Agent Login
               </button>
@@ -158,7 +159,7 @@ const App: React.FC = () => {
           </div>
         </main>
 
-        {/* Mobile Agent Footer (Sticky) - Matches Layout.tsx consistency */}
+        {/* Mobile Agent Footer (Sticky) */}
         <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 p-3 flex items-center justify-between z-50 shadow-[0_-8px_30px_rgba(0,0,0,0.06)] backdrop-blur-xl bg-white/80">
           <div className="flex items-center gap-3">
               <img src={MOCK_AGENT.image} className="w-10 h-10 rounded-xl border border-slate-100 shadow-sm object-cover" alt={MOCK_AGENT.name} />
@@ -206,11 +207,11 @@ const App: React.FC = () => {
          </div>
       )}
 
-      {/* Subtle Bottom-Center Portal Switch */}
-      <div className="fixed bottom-[72px] md:bottom-4 left-1/2 -translate-x-1/2 z-[100]">
+      {/* Subtle Bottom-Center Portal Switch - Precisely center-aligned at bottom of screen on mobile */}
+      <div className="fixed bottom-20 md:bottom-4 left-1/2 -translate-x-1/2 z-[100] w-full flex justify-center pointer-events-none px-4">
         <button 
             onClick={toggleViewMode}
-            className="px-3 py-1.5 md:px-4 md:py-2 text-[8px] font-black uppercase tracking-widest rounded-full transition-all border border-slate-100 shadow-sm backdrop-blur-md bg-white/40 text-slate-300 hover:text-slate-900 hover:bg-white hover:border-slate-200"
+            className="pointer-events-auto px-6 py-2.5 text-[9px] font-black uppercase tracking-[0.2em] rounded-full transition-all border border-slate-200 shadow-xl backdrop-blur-xl bg-white/90 text-slate-400 hover:text-slate-900 hover:border-slate-400"
           >
             {viewMode === 'agent' ? 'Return to Buyer Journey' : 'Agent Access Portal'}
           </button>
