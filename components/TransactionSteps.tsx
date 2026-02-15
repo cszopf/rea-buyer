@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { TransactionStep, BrandConfig, Document, TitleIssue } from '../types';
+import { TransactionStep, BrandConfig, Document, TitleIssue, ExperienceLevel } from '../types';
 import { REAL_PROPERTY_MOCK } from '../constants';
 
 interface StepProps {
@@ -8,27 +8,34 @@ interface StepProps {
   brand: BrandConfig;
   onNext: () => void;
   onBack?: () => void;
+  experienceLevel?: ExperienceLevel;
   optInInsurance?: boolean;
   setOptInInsurance?: (val: boolean) => void;
   optInMortgage?: boolean;
   setOptInMortgage?: (val: boolean) => void;
 }
 
-const ExpectationBox: React.FC<{ title: string; description: string; estTime: string; brand: BrandConfig }> = ({ title, description, estTime, brand }) => (
-  <div className="mt-12 p-6 bg-slate-50 border-l-4 border-slate-900 rounded-r-2xl shadow-sm animate-in fade-in slide-in-from-left-4 duration-1000">
-    <div className="flex justify-between items-start mb-2">
-      <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Radical Transparency: What to expect</h4>
-      <span className="text-[10px] font-black uppercase tracking-tighter bg-white border border-slate-200 px-2 py-0.5 rounded text-slate-900 shadow-sm flex items-center gap-1">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        Current Phase Duration: {estTime}
-      </span>
+const ExpectationBox: React.FC<{ title: string; description: string; estTime: string; brand: BrandConfig; experienceLevel?: ExperienceLevel }> = ({ title, description, estTime, brand, experienceLevel = 'standard' }) => {
+  if (experienceLevel === 'simple') return null;
+
+  return (
+    <div className="mt-12 p-6 bg-slate-50 border-l-4 border-slate-900 rounded-r-2xl shadow-sm animate-in fade-in slide-in-from-left-4 duration-1000">
+      <div className="flex justify-between items-start mb-2">
+        <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Radical Transparency: What to expect</h4>
+        <span className="text-[10px] font-black uppercase tracking-tighter bg-white border border-slate-200 px-2 py-0.5 rounded text-slate-900 shadow-sm flex items-center gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Phase Duration: {estTime}
+        </span>
+      </div>
+      <p className="font-bold text-slate-900 text-sm mb-1 uppercase tracking-tight">{title}</p>
+      {experienceLevel === 'complete' && (
+        <p className="text-xs text-slate-600 leading-relaxed italic">{description}</p>
+      )}
     </div>
-    <p className="font-bold text-slate-900 text-sm mb-1 uppercase tracking-tight">{title}</p>
-    <p className="text-xs text-slate-600 leading-relaxed italic">{description}</p>
-  </div>
-);
+  );
+};
 
 const StepHeader: React.FC<{ title: string; subtitle: string; brand: BrandConfig; stepNum: number }> = ({ title, subtitle, brand, stepNum }) => (
   <div className="mb-10">
@@ -69,7 +76,7 @@ const NavActions: React.FC<{ onNext: () => void; onBack?: () => void; brand: Bra
 );
 
 export const TransactionContent: React.FC<StepProps> = ({ 
-  step, brand, onNext, onBack, 
+  step, brand, onNext, onBack, experienceLevel,
   optInInsurance, setOptInInsurance, 
   optInMortgage, setOptInMortgage 
 }) => {
@@ -98,6 +105,7 @@ export const TransactionContent: React.FC<StepProps> = ({
           <ExpectationBox 
             title="File Setup & Compliance" 
             estTime="Immediate" 
+            experienceLevel={experienceLevel}
             description="Our compliance team is currently mapping your purchase contract to local statutory requirements, ensuring every contingency date is tracked and secured."
             brand={brand}
           />
@@ -130,6 +138,7 @@ export const TransactionContent: React.FC<StepProps> = ({
           <ExpectationBox 
             title="Identity Shielding" 
             estTime="5 Mins" 
+            experienceLevel={experienceLevel}
             description="We use government-grade biometric matching to ensure the person signing is exactly who they claim to be. This eliminates 99.9% of identity-based wire fraud risks."
             brand={brand}
           />
@@ -254,6 +263,7 @@ export const TransactionContent: React.FC<StepProps> = ({
           <ExpectationBox 
             title="Digital Custody & Vault" 
             estTime="Continuous" 
+            experienceLevel={experienceLevel}
             description="Your documents are stored in an AES-256 encrypted vault. We are meticulously auditing each signature to ensure your loan is legally fundable and state-compliant."
             brand={brand}
           />
@@ -293,6 +303,7 @@ export const TransactionContent: React.FC<StepProps> = ({
           <ExpectationBox 
             title="The 40-Year Legal Exam" 
             estTime="48-72 Hours" 
+            experienceLevel={experienceLevel}
             description="Our examiners search the land's history for 'ghost liens' and ancient easements. We don't just verify names; we ensure the physical parcel is free of hidden claims before you own it."
             brand={brand}
           />
@@ -326,6 +337,7 @@ export const TransactionContent: React.FC<StepProps> = ({
           <ExpectationBox 
             title="Financial Sovereignty" 
             estTime="3-5 Days" 
+            experienceLevel={experienceLevel}
             description="We are coordinating with current lienholders to ensure their debts are paid in full. This guarantees you are handed a 'free and clear' title the moment your deed is recorded."
             brand={brand}
           />
@@ -368,6 +380,7 @@ export const TransactionContent: React.FC<StepProps> = ({
           <ExpectationBox 
             title="Legal Witnessing & Execution" 
             estTime="60 Mins" 
+            experienceLevel={experienceLevel}
             description="A state-certified notary will witness your wet-ink signatures. This ceremony provides the final layer of legal validity required for a secure property transfer in the State of Ohio."
             brand={brand}
           />
@@ -424,12 +437,12 @@ export const TransactionContent: React.FC<StepProps> = ({
                 <div className="flex flex-col md:flex-row justify-between items-start mb-10 border-b border-slate-100 pb-8 gap-6">
                    <div>
                       <h4 className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Total Closing Costs</h4>
-                      <p className="text-5xl font-black text-slate-900 tracking-tighter">$26,755.91</p>
+                      <p className="text-3xl md:text-5xl font-black text-slate-900 tracking-tighter">$26,755.91</p>
                       <span className="text-[10px] bg-blue-100 text-blue-700 font-black px-2 py-0.5 rounded-full uppercase tracking-tighter mt-1 inline-block">Includes $50 Digital Credit</span>
                    </div>
-                   <div className="text-right">
+                   <div className="md:text-right">
                       <h4 className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Final Cash to Close</h4>
-                      <p className="text-5xl font-black text-blue-600 tracking-tighter">$251,578.04</p>
+                      <p className="text-3xl md:text-5xl font-black text-blue-600 tracking-tighter">$251,578.04</p>
                    </div>
                 </div>
 
@@ -522,7 +535,7 @@ export const TransactionContent: React.FC<StepProps> = ({
                 </div>
 
                 {showWireInstructions && (
-                   <div className="p-8 border-t border-blue-100 bg-white space-y-8 animate-in slide-in-from-top-4 duration-500">
+                   <div className="p-8 border-t border-blue-100 bg-white space-y-8 animate-in slide-in-from-top-4 duration-500 text-left">
                       {/* Security Warning */}
                       <div className="p-6 bg-red-50 border border-red-100 rounded-2xl flex gap-4">
                          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -578,11 +591,12 @@ export const TransactionContent: React.FC<StepProps> = ({
           <ExpectationBox 
             title="The Final Financial Audit" 
             estTime="24 Hours" 
+            experienceLevel={experienceLevel}
             description="Every penny is accounted for. This disclosure is the final result of a multi-party audit between WCT, your lender, and the seller's representatives to ensure 100% precision."
             brand={brand}
           />
 
-          <div className="flex justify-center gap-6 mt-8">
+          <div className="flex flex-wrap justify-center gap-4 mt-8">
              <Button label="Print Digital CD" onClick={() => window.print()} brand={brand} />
              <Button label="Acknowledge & Sign" onClick={onNext} primary brand={brand} className="shadow-lg shadow-blue-500/20" />
           </div>
@@ -591,12 +605,12 @@ export const TransactionContent: React.FC<StepProps> = ({
 
     case TransactionStep.CLOSED:
       return (
-        <div className="animate-in fade-in duration-1000 max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[70vh] text-center">
+        <div className="animate-in fade-in duration-1000 max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[70vh] text-center px-4">
             {/* Activation Shield Visual */}
             <div className="relative mb-12">
                <div className="absolute inset-0 bg-blue-100 rounded-full scale-150 blur-3xl opacity-30 animate-pulse"></div>
-               <div className="relative z-10 w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-2xl border border-slate-100 group">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-blue-600 animate-in zoom-in duration-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+               <div className="relative z-10 w-24 md:w-32 h-24 md:h-32 bg-white rounded-full flex items-center justify-center shadow-2xl border border-slate-100 group">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 md:h-16 md:w-16 text-blue-600 animate-in zoom-in duration-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                   <div className="absolute -inset-2 border-2 border-blue-600/20 rounded-full animate-ping [animation-duration:3s]"></div>
@@ -604,10 +618,10 @@ export const TransactionContent: React.FC<StepProps> = ({
             </div>
 
             <div className="space-y-4 max-w-2xl">
-              <h2 className="font-header text-5xl tracking-tighter text-slate-900 mb-2">
+              <h2 className="font-header text-3xl md:text-5xl tracking-tighter text-slate-900 mb-2 leading-tight">
                 Ownership Verified.<br/>Protection Activated.
               </h2>
-              <p className="text-xl text-slate-500 font-medium leading-relaxed px-4">
+              <p className="text-base md:text-xl text-slate-500 font-medium leading-relaxed px-4">
                 Your property records for <span className="text-slate-900 font-bold">{REAL_PROPERTY_MOCK.address}</span> are now professionally monitored and continuously protected by WCT Smart ONE.
               </p>
             </div>
@@ -615,7 +629,7 @@ export const TransactionContent: React.FC<StepProps> = ({
             <div className="mt-16 flex flex-col items-center gap-6">
                <button 
                   onClick={onNext}
-                  className="px-16 py-6 bg-slate-900 text-white rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-slate-900/20 active:scale-95 transition-all hover:bg-slate-800 hover:shadow-xl"
+                  className="px-10 md:px-16 py-5 md:py-6 bg-slate-900 text-white rounded-2xl font-black text-xs md:text-sm uppercase tracking-[0.2em] shadow-2xl shadow-slate-900/20 active:scale-95 transition-all hover:bg-slate-800 hover:shadow-xl"
                >
                   Enter Smart ONE Dashboard
                </button>

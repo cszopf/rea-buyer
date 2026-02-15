@@ -23,6 +23,7 @@ export enum TransactionStep {
 }
 
 export type ViewMode = 'buyer' | 'agent';
+export type ExperienceLevel = 'simple' | 'standard' | 'complete';
 
 export interface AgentInfo {
   name: string;
