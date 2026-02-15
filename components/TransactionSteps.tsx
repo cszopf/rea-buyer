@@ -15,6 +15,69 @@ interface StepProps {
   setOptInMortgage?: (val: boolean) => void;
 }
 
+const PricingModule: React.FC<{ brand: BrandConfig; experienceLevel: ExperienceLevel }> = ({ brand, experienceLevel }) => {
+  const isProtection = experienceLevel === 'standard';
+  const isEfficiency = experienceLevel === 'simple';
+  const isPremium = experienceLevel === 'complete';
+
+  const getBuyerCopy = () => {
+    if (isProtection) return "Your $199 fee ensures your property is verified in real time, your funds are protected against fraud, and every step of your closing is transparent. It also includes a 90-day free trial of Smart One, providing ongoing title monitoring and ownership protection after closing. We believe security should be built in, not added later.";
+    if (isEfficiency) return "Your $199 fee powers Smart Spaces, which automates your title search in real time and reduces delays by combining technology with expert review. You’ll also receive a 90-day free trial of Smart One to manage your property after closing. No hidden line items. No unnecessary fees.";
+    return "Your $199 fee gives you access to Smart Spaces, our modern title environment that verifies your property in real time while our experts oversee every detail. It also includes a 90-day Smart One trial so your ownership experience continues beyond closing. Transparent pricing designed for a better closing experience.";
+  };
+
+  return (
+    <div className="my-12 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+      <div className="mb-8">
+        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-2">Pricing Transparency</h3>
+        <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Our Fees. Simple. Transparent. Built for You.</h2>
+      </div>
+
+      <div className="flex justify-start mb-8">
+        {/* Buyer Fee Card - Centered or max-width adjusted for single card */}
+        <div className="w-full md:max-w-md bg-white border-2 border-slate-100 p-8 rounded-[2.5rem] relative overflow-hidden group hover:border-blue-600 transition-all shadow-sm">
+           <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+           </div>
+           <p className="text-[10px] font-black uppercase tracking-widest text-blue-600 mb-2">Buyer Fee</p>
+           <div className="flex items-baseline gap-2 mb-4">
+              <span className="text-4xl font-black text-slate-900">$199</span>
+              <span className="text-xs font-bold text-slate-400">per buyer</span>
+           </div>
+           <p className="text-xs text-slate-600 leading-relaxed font-medium mb-6 relative z-10">
+              {getBuyerCopy()}
+           </p>
+           <div className="space-y-2 border-t border-slate-50 pt-4">
+              {['Smart Spaces automated title search', 'Real-time transaction dashboard', 'Wire fraud monitoring', 'Digital coordination', '90-day free trial of Smart One'].map((item, idx) => (
+                <div key={idx} className="flex items-center gap-2">
+                   <svg className="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
+                   <span className="text-[10px] font-black uppercase tracking-tighter text-slate-500">{item}</span>
+                </div>
+              ))}
+           </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left border-t border-slate-100 pt-8">
+         <div>
+            <h4 className="text-[9px] font-black uppercase tracking-widest text-slate-900 mb-2">Title Insurance Disclosure</h4>
+            <p className="text-[10px] text-slate-500 leading-relaxed italic">
+               Title insurance premiums are filed and regulated by state rate manuals and are not marked up or altered by Smart or WCT.
+            </p>
+         </div>
+         <div>
+            <h4 className="text-[9px] font-black uppercase tracking-widest text-slate-900 mb-2">Additional Fees Disclosure</h4>
+            <p className="text-[10px] text-slate-500 leading-relaxed italic">
+               All other line items on the Closing Disclosure are required by the purchase contract, your lender, or government recording fees. We do not add hidden technology or processing charges.
+            </p>
+         </div>
+      </div>
+    </div>
+  );
+};
+
 const ExpectationBox: React.FC<{ title: string; description: string; estTime: string; brand: BrandConfig; experienceLevel?: ExperienceLevel }> = ({ title, description, estTime, brand, experienceLevel = 'standard' }) => {
   if (experienceLevel === 'simple') return null;
 
@@ -76,19 +139,16 @@ const NavActions: React.FC<{ onNext: () => void; onBack?: () => void; brand: Bra
 );
 
 export const TransactionContent: React.FC<StepProps> = ({ 
-  step, brand, onNext, onBack, experienceLevel,
-  optInInsurance, setOptInInsurance, 
-  optInMortgage, setOptInMortgage 
+  step, brand, onNext, onBack, experienceLevel = 'standard',
+  optInInsurance, setOptInInsurance 
 }) => {
   const [showWireInstructions, setShowWireInstructions] = useState(false);
   const [financingPath, setFinancingPath] = useState<'choose' | 'existing' | 'shop' | 'new' | 'cash'>('choose');
 
   const handleDownloadWireInstructions = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // In a real app, this would trigger a PDF download.
-    // For this prototype, we'll simulate the intent.
     alert("Official Wire Instructions PDF is being generated and downloaded to your device.");
-    window.print(); // Fallback for prototype visual
+    window.print();
   };
 
   switch (step) {
@@ -745,6 +805,9 @@ export const TransactionContent: React.FC<StepProps> = ({
              </div>
           </div>
           
+          {/* Transparent Pricing Module Injection */}
+          <PricingModule brand={brand} experienceLevel={experienceLevel} />
+
           <ExpectationBox 
             title="The Final Financial Audit" 
             estTime="24 Hours" 
@@ -763,7 +826,6 @@ export const TransactionContent: React.FC<StepProps> = ({
     case TransactionStep.CLOSED:
       return (
         <div className="animate-in fade-in duration-1000 max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[70vh] text-center px-4">
-            {/* Activation Shield Visual */}
             <div className="relative mb-12">
                <div className="absolute inset-0 bg-blue-100 rounded-full scale-150 blur-3xl opacity-30 animate-pulse"></div>
                <div className="relative z-10 w-24 md:w-32 h-24 md:h-32 bg-white rounded-full flex items-center justify-center shadow-2xl border border-slate-100 group">
