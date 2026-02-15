@@ -49,14 +49,24 @@ const App: React.FC = () => {
     return (
       <div className="fixed inset-0 bg-white z-[200] flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-700 overflow-y-auto">
         <div className="max-w-xl w-full py-12">
-           <div className="mb-12">
-              <div className="w-16 h-16 bg-blue-600 rounded-2xl mx-auto mb-8 flex items-center justify-center text-white shadow-xl shadow-blue-500/20">
-                <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
+           <div className="mb-12 flex flex-col items-center">
+              {/* White-labeled Branding Text */}
+              <div className="mb-6">
+                <h1 
+                  className="font-header uppercase-tracking-150 text-2xl md:text-3xl leading-none mb-1" 
+                  style={{ color: brand.primaryColor }}
+                >
+                  {brand.logoName}
+                </h1>
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">Transaction ONE Portal</p>
               </div>
-              <h1 className="text-slate-900 font-header text-3xl md:text-4xl tracking-tighter mb-4 px-4 leading-tight">Tailor your closing experience</h1>
-              <p className="text-slate-500 font-medium px-8 text-sm md:text-base">Choose how much technical and legal detail you'd like to see throughout your transaction.</p>
+              
+              <h1 className="text-slate-900 font-header text-3xl md:text-4xl tracking-tighter mb-4 px-4 leading-tight">
+                Tailor your closing experience
+              </h1>
+              <p className="text-slate-500 font-medium px-8 text-sm md:text-base">
+                Choose the level of transparency and technical detail you'd like throughout your journey with <span style={{ color: brand.primaryColor }} className="font-bold">{brand.logoName}</span>.
+              </p>
            </div>
            
            <div className="grid grid-cols-1 gap-4 w-full">
@@ -64,28 +74,34 @@ const App: React.FC = () => {
                 title="Simple" 
                 subtitle="High-level status updates. Just tell me what I need to do next." 
                 icon="⚡"
+                brand={brand}
                 onClick={() => setExperienceLevel('simple')}
               />
               <PreferenceCard 
                 title="Standard" 
-                subtitle="The recommended experience. Balanced context and guidance." 
+                subtitle="The recommended experience. Balanced context and helpful guidance." 
                 icon="✨"
+                brand={brand}
                 onClick={() => setExperienceLevel('standard')}
               />
               <PreferenceCard 
                 title="Complete" 
                 subtitle="Deep dive transparency. Professional legal and curative detail." 
                 icon="🛡️"
+                brand={brand}
                 onClick={() => setExperienceLevel('complete')}
               />
            </div>
 
-           <button 
-              onClick={toggleViewMode}
-              className="mt-16 text-[9px] font-black text-slate-300 uppercase tracking-widest hover:text-slate-600 transition-colors"
-           >
-              Agent Login
-           </button>
+           <div className="mt-16 flex flex-col items-center gap-4">
+             <button 
+                onClick={toggleViewMode}
+                className="text-[9px] font-black text-slate-300 uppercase tracking-widest hover:text-slate-600 transition-colors border-b border-transparent hover:border-slate-300 pb-1"
+             >
+                Closer / Agent Login
+             </button>
+             <p className="text-[8px] text-slate-300 font-medium italic">Secure Multi-Party Closing Protocol v2.5</p>
+           </div>
         </div>
       </div>
     );
@@ -149,14 +165,17 @@ const App: React.FC = () => {
   );
 };
 
-const PreferenceCard = ({ title, subtitle, icon, onClick }: { title: string, subtitle: string, icon: string, onClick: () => void }) => (
+const PreferenceCard = ({ title, subtitle, icon, brand, onClick }: { title: string, subtitle: string, icon: string, brand: BrandConfig, onClick: () => void }) => (
   <button 
     onClick={onClick}
-    className="group p-6 bg-white border border-slate-100 rounded-[2rem] text-left hover:border-blue-600 hover:shadow-2xl hover:shadow-blue-500/10 transition-all active:scale-[0.98] flex items-center gap-6"
+    className="group p-6 bg-white border border-slate-100 rounded-[2rem] text-left hover:border-slate-900 hover:shadow-2xl hover:shadow-slate-900/5 transition-all active:scale-[0.98] flex items-center gap-6"
+    style={{ borderColor: 'transparent' }} 
   >
     <div className="text-3xl grayscale group-hover:grayscale-0 transition-all">{icon}</div>
     <div>
-      <p className="text-xl font-black text-slate-900 mb-1 group-hover:text-blue-600 transition-colors tracking-tight">{title}</p>
+      <p className="text-xl font-black text-slate-900 mb-1 group-hover:transition-colors tracking-tight" style={{ color: 'inherit' }}>
+        <span className="group-hover:text-blue-600 transition-colors" style={{ color: brand.primaryColor }}>{title}</span>
+      </p>
       <p className="text-xs md:text-sm text-slate-500 font-medium leading-snug">{subtitle}</p>
     </div>
   </button>

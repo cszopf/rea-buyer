@@ -1,6 +1,9 @@
 
 import { BrandConfig, AgentInfo } from './types';
 
+// Add missing LOGO_URL export for the app's brand identity
+export const LOGO_URL = 'https://worldclasstitle.com/wp-content/uploads/2022/07/WCT-Logo-Full-Color.png';
+
 export const WCT_BRAND: BrandConfig = {
   logoName: 'WORLD CLASS TITLE',
   primaryColor: '#004EA8',
