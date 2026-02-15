@@ -81,7 +81,15 @@ export const TransactionContent: React.FC<StepProps> = ({
   optInMortgage, setOptInMortgage 
 }) => {
   const [showWireInstructions, setShowWireInstructions] = useState(false);
-  const [financingPath, setFinancingPath] = useState<'choose' | 'existing' | 'shop' | 'new'>('choose');
+  const [financingPath, setFinancingPath] = useState<'choose' | 'existing' | 'shop' | 'new' | 'cash'>('choose');
+
+  const handleDownloadWireInstructions = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // In a real app, this would trigger a PDF download.
+    // For this prototype, we'll simulate the intent.
+    alert("Official Wire Instructions PDF is being generated and downloaded to your device.");
+    window.print(); // Fallback for prototype visual
+  };
 
   switch (step) {
     case TransactionStep.STARTED:
@@ -100,7 +108,7 @@ export const TransactionContent: React.FC<StepProps> = ({
             </div>
             <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg">
               <p className="text-[10px] font-black text-slate-400 uppercase">Lender</p>
-              <p className="font-bold text-slate-800 text-lg">{REAL_PROPERTY_MOCK.lender}</p>
+              <p className="font-bold text-slate-800 text-lg">{financingPath === 'cash' ? 'No Lender (Cash Purchase)' : REAL_PROPERTY_MOCK.lender}</p>
             </div>
           </div>
           <ExpectationBox 
@@ -125,7 +133,7 @@ export const TransactionContent: React.FC<StepProps> = ({
           />
           
           {financingPath === 'choose' && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
               <PathCard 
                 title="Existing Lender" 
                 subtitle="Use the lender on your contract" 
@@ -144,6 +152,35 @@ export const TransactionContent: React.FC<StepProps> = ({
                 icon="📝"
                 onClick={() => setFinancingPath('new')}
               />
+              <PathCard 
+                title="Cash Purchase" 
+                subtitle="Skip financing coordination" 
+                icon="💰"
+                onClick={() => setFinancingPath('cash')}
+              />
+            </div>
+          )}
+
+          {financingPath === 'cash' && (
+            <div className="space-y-6 animate-in fade-in duration-500">
+              <div className="bg-white border border-slate-200 p-8 rounded-3xl space-y-4">
+                 <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest border-b border-slate-100 pb-2">Cash Transaction Verification</h4>
+                 <p className="text-slate-600 text-sm leading-relaxed">
+                   You have indicated that this is a <strong>Cash Transaction</strong>. WCT will proceed without lender instructions. Please ensure your proof of funds is available if requested by the seller.
+                 </p>
+                 <div className="p-4 bg-green-50 border border-green-100 rounded-xl flex items-center gap-3">
+                   <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-green-600 shadow-sm shrink-0">
+                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                     </svg>
+                   </div>
+                   <p className="text-xs text-green-800 font-bold">Lender requirements have been waived for this file.</p>
+                 </div>
+              </div>
+              <div className="flex justify-center">
+                 <button onClick={() => setFinancingPath('choose')} className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-1">Change to Financing</button>
+              </div>
+              <NavActions onNext={onNext} onBack={() => setFinancingPath('choose')} brand={brand} nextLabel="Confirm Cash Purchase" />
             </div>
           )}
 
@@ -336,33 +373,6 @@ export const TransactionContent: React.FC<StepProps> = ({
                     />
                  </div>
               </div>
-
-              <div className="flex items-center justify-between p-5 bg-white rounded-2xl border border-slate-100 shadow-sm transition-all hover:border-slate-300">
-                 <div className="flex gap-4">
-                    <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white border border-blue-500 shadow-md shrink-0">
-                       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                       </svg>
-                    </div>
-                    <div>
-                       <p className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                         Mortgage Competition
-                         <span className="text-[9px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full uppercase font-black tracking-tighter">Marketplace</span>
-                       </p>
-                       <p className="text-xs text-slate-500 mt-1 leading-snug">Lenders (including {REAL_PROPERTY_MOCK.lender}) compete for your business. Non-binding pre-approval available.</p>
-                    </div>
-                 </div>
-                 <div className="flex items-center gap-3 shrink-0">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter cursor-pointer hidden sm:block" htmlFor="optInMortgage">Invite Bids</label>
-                    <input 
-                        id="optInMortgage"
-                        type="checkbox" 
-                        className="w-7 h-7 rounded-lg accent-blue-600 cursor-pointer shadow-sm"
-                        checked={optInMortgage}
-                        onChange={(e) => setOptInMortgage?.(e.target.checked)}
-                    />
-                 </div>
-              </div>
             </div>
           </div>
           <ExpectationBox 
@@ -508,23 +518,39 @@ export const TransactionContent: React.FC<StepProps> = ({
             <div>
                <p className="text-[10px] font-black uppercase text-slate-400 border-b border-slate-100 pb-1 mb-2 tracking-widest">Loan Information</p>
                <div className="space-y-4">
-                  <div>
-                    <p className="text-xs text-slate-500">Loan Amount</p>
-                    <p className="text-xl font-black text-slate-900">${REAL_PROPERTY_MOCK.loanAmount.toLocaleString()}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-500">Interest Rate</p>
-                    <p className="text-xl font-black text-slate-900">{REAL_PROPERTY_MOCK.interestRate}%</p>
-                  </div>
+                  {financingPath === 'cash' ? (
+                    <div>
+                      <p className="text-xs text-slate-500">Financing Method</p>
+                      <p className="text-xl font-black text-slate-900">CASH TRANSACTION</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div>
+                        <p className="text-xs text-slate-500">Loan Amount</p>
+                        <p className="text-xl font-black text-slate-900">${REAL_PROPERTY_MOCK.loanAmount.toLocaleString()}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-500">Interest Rate</p>
+                        <p className="text-xl font-black text-slate-900">{REAL_PROPERTY_MOCK.interestRate}%</p>
+                      </div>
+                    </>
+                  )}
                </div>
             </div>
             <div className="md:col-span-2">
                <p className="text-[10px] font-black uppercase text-slate-400 border-b border-slate-100 pb-1 mb-2 tracking-widest">Projected Payments (Year 1)</p>
                <div className="bg-slate-50 p-6 rounded-2xl flex justify-between items-center border border-slate-200 shadow-inner">
-                  <div>
-                    <p className="text-xs text-slate-600 font-semibold">Principal & Interest</p>
-                    <p className="text-2xl font-black text-slate-900">$5,915.38 <span className="text-xs font-normal text-slate-500">/mo</span></p>
-                  </div>
+                  {financingPath === 'cash' ? (
+                    <div>
+                      <p className="text-xs text-slate-600 font-semibold italic">Principal & Interest</p>
+                      <p className="text-2xl font-black text-slate-900">$0.00 <span className="text-xs font-normal text-slate-500">/mo</span></p>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-xs text-slate-600 font-semibold">Principal & Interest</p>
+                      <p className="text-2xl font-black text-slate-900">$5,915.38 <span className="text-xs font-normal text-slate-500">/mo</span></p>
+                    </div>
+                  )}
                   <div className="text-right">
                     <p className="text-xs text-slate-600 font-semibold">Estimated Escrow</p>
                     <p className="text-xl font-black text-slate-900">$1,050.00 <span className="text-xs font-normal text-slate-500">/mo</span></p>
@@ -542,12 +568,12 @@ export const TransactionContent: React.FC<StepProps> = ({
                 <div className="flex flex-col md:flex-row justify-between items-start mb-10 border-b border-slate-100 pb-8 gap-6">
                    <div>
                       <h4 className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Total Closing Costs</h4>
-                      <p className="text-3xl md:text-5xl font-black text-slate-900 tracking-tighter">$26,755.91</p>
+                      <p className="text-3xl md:text-5xl font-black text-slate-900 tracking-tighter">${(financingPath === 'cash' ? 14500 : 26755.91).toLocaleString()}</p>
                       <span className="text-[10px] bg-blue-100 text-blue-700 font-black px-2 py-0.5 rounded-full uppercase tracking-tighter mt-1 inline-block">Includes $50 Digital Credit</span>
                    </div>
                    <div className="md:text-right">
                       <h4 className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Final Cash to Close</h4>
-                      <p className="text-3xl md:text-5xl font-black text-blue-600 tracking-tighter">$251,578.04</p>
+                      <p className="text-3xl md:text-5xl font-black text-blue-600 tracking-tighter">${(financingPath === 'cash' ? REAL_PROPERTY_MOCK.salePrice + 14500 : 251578.04).toLocaleString()}</p>
                    </div>
                 </div>
 
@@ -555,17 +581,21 @@ export const TransactionContent: React.FC<StepProps> = ({
                    <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
                       <div className="flex items-center justify-between mb-4">
                         <p className="text-[10px] font-black uppercase text-slate-900 tracking-widest">Loan Costs (A+B+C)</p>
-                        <p className="text-xs font-bold text-slate-800">$7,426.00</p>
+                        <p className="text-xs font-bold text-slate-800">${financingPath === 'cash' ? '4,024.00' : '7,426.00'}</p>
                       </div>
                       <div className="space-y-3 px-1">
-                         <div className="flex justify-between text-sm">
-                            <span className="text-slate-500">A. Origination Charges (0.25% Points)</span>
-                            <span className="font-bold text-slate-800">$2,500.00</span>
-                         </div>
-                         <div className="flex justify-between text-sm">
-                            <span className="text-slate-500">B. Services Did Not Shop For</span>
-                            <span className="font-bold text-slate-800">$902.00</span>
-                         </div>
+                         {financingPath !== 'cash' && (
+                           <>
+                             <div className="flex justify-between text-sm">
+                                <span className="text-slate-500">A. Origination Charges (0.25% Points)</span>
+                                <span className="font-bold text-slate-800">$2,500.00</span>
+                             </div>
+                             <div className="flex justify-between text-sm">
+                                <span className="text-slate-500">B. Services Did Not Shop For</span>
+                                <span className="font-bold text-slate-800">$902.00</span>
+                             </div>
+                           </>
+                         )}
                          <div className="flex justify-between text-sm">
                             <span className="text-slate-500">C. Services Did Shop For (WCT Settlement)</span>
                             <span className="font-bold text-slate-800">$4,024.00</span>
@@ -576,7 +606,7 @@ export const TransactionContent: React.FC<StepProps> = ({
                    <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
                       <div className="flex items-center justify-between mb-4">
                         <p className="text-[10px] font-black uppercase text-slate-900 tracking-widest">Other Costs (E+F+G+H)</p>
-                        <p className="text-xs font-bold text-slate-800">$19,329.91</p>
+                        <p className="text-xs font-bold text-slate-800">${financingPath === 'cash' ? '10,526.00' : '19,329.91'}</p>
                       </div>
                       <div className="space-y-3 px-1">
                          <div className="flex justify-between text-sm">
@@ -614,9 +644,9 @@ export const TransactionContent: React.FC<StepProps> = ({
 
           {/* Secure Wire Instructions Section */}
           <div className="mb-12">
-             <button 
+             <div 
                 onClick={() => setShowWireInstructions(!showWireInstructions)}
-                className="w-full group overflow-hidden rounded-3xl border border-blue-200 bg-blue-50/30 hover:bg-blue-50 transition-all shadow-sm"
+                className="w-full group overflow-hidden rounded-3xl border border-blue-200 bg-blue-50/30 hover:bg-blue-50 transition-all shadow-sm cursor-pointer"
              >
                 <div className="p-6 flex items-center justify-between">
                    <div className="flex items-center gap-4">
@@ -630,13 +660,26 @@ export const TransactionContent: React.FC<StepProps> = ({
                          <p className="text-lg font-black text-slate-900 tracking-tight">Open Secure Wire Portal</p>
                       </div>
                    </div>
-                   <svg 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      className={`h-6 w-6 text-blue-400 transition-transform duration-300 ${showWireInstructions ? 'rotate-180' : ''}`} 
-                      fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                   >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                   </svg>
+                   <div className="flex items-center gap-4">
+                      {showWireInstructions && (
+                        <button 
+                          onClick={handleDownloadWireInstructions}
+                          className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white border border-blue-200 text-blue-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-50 transition-colors shadow-sm"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          </svg>
+                          Download PDF
+                        </button>
+                      )}
+                      <svg 
+                         xmlns="http://www.w3.org/2000/svg" 
+                         className={`h-6 w-6 text-blue-400 transition-transform duration-300 ${showWireInstructions ? 'rotate-180' : ''}`} 
+                         fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                      >
+                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                   </div>
                 </div>
 
                 {showWireInstructions && (
@@ -665,6 +708,15 @@ export const TransactionContent: React.FC<StepProps> = ({
                                <InstructionRow label="Account Number" value="123456789" masked />
                                <InstructionRow label="Reference Field" value={REAL_PROPERTY_MOCK.parcelId} />
                             </div>
+                            <button 
+                               onClick={handleDownloadWireInstructions}
+                               className="sm:hidden w-full flex items-center justify-center gap-2 px-6 py-4 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg active:scale-95"
+                            >
+                               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                               </svg>
+                               Download PDF Instructions
+                            </button>
                          </div>
                          <div className="space-y-6">
                             <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">How to send your wire</h5>
@@ -690,7 +742,7 @@ export const TransactionContent: React.FC<StepProps> = ({
                       </div>
                    </div>
                 )}
-             </button>
+             </div>
           </div>
           
           <ExpectationBox 
