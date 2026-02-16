@@ -18,12 +18,11 @@ interface StepProps {
 const PricingModule: React.FC<{ brand: BrandConfig; experienceLevel: ExperienceLevel }> = ({ brand, experienceLevel }) => {
   const isProtection = experienceLevel === 'standard';
   const isEfficiency = experienceLevel === 'simple';
-  const isPremium = experienceLevel === 'complete';
 
   const getBuyerCopy = () => {
-    if (isProtection) return "Your $199 fee ensures your property is verified in real time, your funds are protected against fraud, and every step of your closing is transparent. It also includes a 90-day free trial of Smart One, providing ongoing title monitoring and ownership protection after closing. We believe security should be built in, not added later.";
-    if (isEfficiency) return "Your $199 fee powers Smart Spaces, which automates your title search in real time and reduces delays by combining technology with expert review. You’ll also receive a 90-day free trial of Smart One to manage your property after closing. No hidden line items. No unnecessary fees.";
-    return "Your $199 fee gives you access to Smart Spaces, our modern title environment that verifies your property in real time while our experts oversee every detail. It also includes a 90-day Smart One trial so your ownership experience continues beyond closing. Transparent pricing designed for a better closing experience.";
+    if (isProtection) return "Your $249 fee (discounted to $199 for using Transaction ONE) ensures your property is verified in real time, your funds are protected against fraud, and every step of your closing is transparent. It also includes a 90-day free trial of Smart One, providing ongoing title monitoring and ownership protection after closing. We believe security should be built in, not added later.";
+    if (isEfficiency) return "Your $249 fee (discounted to $199 for using Transaction ONE) powers Smart Spaces, which automates your title search in real time and reduces delays by combining technology with expert review. You’ll also receive a 90-day free trial of Smart One to manage your property after closing. No hidden line items. No unnecessary fees.";
+    return "Your $249 fee (discounted to $199 for using Transaction ONE) gives you access to Smart Spaces, our modern title environment that verifies your property in real time while our experts oversee every detail. It also includes a 90-day Smart One trial so your ownership experience continues beyond closing. Transparent pricing designed for a better closing experience.";
   };
 
   return (
@@ -34,7 +33,6 @@ const PricingModule: React.FC<{ brand: BrandConfig; experienceLevel: ExperienceL
       </div>
 
       <div className="flex justify-start mb-8">
-        {/* Buyer Fee Card - Centered or max-width adjusted for single card */}
         <div className="w-full md:max-w-md bg-white border-2 border-slate-100 p-8 rounded-[2.5rem] relative overflow-hidden group hover:border-blue-600 transition-all shadow-sm">
            <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -42,9 +40,15 @@ const PricingModule: React.FC<{ brand: BrandConfig; experienceLevel: ExperienceL
               </svg>
            </div>
            <p className="text-[10px] font-black uppercase tracking-widest text-blue-600 mb-2">Buyer Fee</p>
-           <div className="flex items-baseline gap-2 mb-4">
-              <span className="text-4xl font-black text-slate-900">$199</span>
-              <span className="text-xs font-bold text-slate-400">per buyer</span>
+           <div className="flex flex-col mb-4">
+              <div className="flex items-baseline gap-2">
+                <span className="text-4xl font-black text-slate-900">$249</span>
+                <span className="text-xs font-bold text-slate-400 line-through decoration-red-400">$249</span>
+              </div>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-xs font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">-$50 Digital Portal Credit</span>
+                <span className="text-xs font-black text-slate-900">= $199 NET</span>
+              </div>
            </div>
            <p className="text-xs text-slate-600 leading-relaxed font-medium mb-6 relative z-10">
               {getBuyerCopy()}
@@ -660,6 +664,14 @@ export const TransactionContent: React.FC<StepProps> = ({
                             <span className="text-slate-500">C. Services Did Shop For (WCT Settlement)</span>
                             <span className="font-bold text-slate-800">$4,024.00</span>
                          </div>
+                         <div className="flex justify-between text-xs pl-4 border-l border-slate-200 mt-2">
+                            <span className="text-slate-500 font-bold italic">Buyer Closing Fee</span>
+                            <span className="font-black text-slate-900">$249.00</span>
+                         </div>
+                         <div className="flex justify-between text-xs pl-4 border-l border-slate-200 mt-1">
+                            <span className="text-blue-600 font-bold italic">WCT Digital Service Credit</span>
+                            <span className="font-black text-blue-600">-$50.00</span>
+                         </div>
                       </div>
                    </div>
 
@@ -687,14 +699,6 @@ export const TransactionContent: React.FC<StepProps> = ({
                          <div className="flex justify-between text-sm">
                             <span className="text-slate-500">H. Other Curative Adjustments</span>
                             <span className="font-bold text-slate-800">$2,494.13</span>
-                         </div>
-                         {/* Credit line item */}
-                         <div className="flex justify-between text-sm pt-2 border-t border-slate-200 mt-2">
-                            <span className="text-blue-600 font-bold flex items-center gap-2">
-                              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
-                              WCT Digital Service Credit
-                            </span>
-                            <span className="font-black text-blue-600">-$50.00</span>
                          </div>
                       </div>
                    </div>
