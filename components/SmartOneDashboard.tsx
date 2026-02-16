@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrandConfig, AgentInfo } from '../types';
 import { REAL_PROPERTY_MOCK } from '../constants';
+import { GoogleGenAI } from "@google/genai";
 
 interface DashboardProps {
   brand: BrandConfig;
@@ -9,13 +10,56 @@ interface DashboardProps {
   daysRemaining: number;
 }
 
+interface PizzaRecommendation {
+  name: string;
+  description: string;
+  url: string;
+}
+
 const SmartOneDashboard: React.FC<DashboardProps> = ({ brand, agent, daysRemaining }) => {
   const [lastScan, setLastScan] = useState<string>('');
+  const [pizzaRec, setPizzaRec] = useState<PizzaRecommendation | null>(null);
+  const [isLoadingPizza, setIsLoadingPizza] = useState(false);
 
   useEffect(() => {
     const now = new Date();
     setLastScan(`${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')} PM Today`);
+    fetchPizzaRecommendation();
   }, []);
+
+  const fetchPizzaRecommendation = async () => {
+    setIsLoadingPizza(true);
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const prompt = `What is a highly-rated local pizza place near ${REAL_PROPERTY_MOCK.address}, ${REAL_PROPERTY_MOCK.cityStateZip} for a moving day dinner? Provide the name and a one-sentence reason why it's great.`;
+      
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: prompt,
+        config: {
+          tools: [{ googleMaps: {} }],
+        },
+      });
+
+      const text = response.text || "";
+      const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+      
+      // Attempt to extract place name and URL from grounding
+      const mapChunk = groundingChunks.find(chunk => chunk.maps?.uri);
+      const url = mapChunk?.maps?.uri || "";
+      const name = mapChunk?.maps?.title || "Local Pizza Favorite";
+
+      setPizzaRec({
+        name: name,
+        description: text.split('\n')[0], // Use first line of text
+        url: url
+      });
+    } catch (error) {
+      console.error("Error fetching pizza recommendation:", error);
+    } finally {
+      setIsLoadingPizza(false);
+    }
+  };
 
   const protectionColorClass = daysRemaining <= 15 ? 'text-orange-500' : 'text-blue-600';
   const protectionStatusLabel = daysRemaining <= 15 ? 'Protection Period Concluding Soon' : 'Active Protection';
@@ -151,6 +195,48 @@ const SmartOneDashboard: React.FC<DashboardProps> = ({ brand, agent, daysRemaini
               cost="$45.00/mo"
            />
         </div>
+      </section>
+
+      {/* NEW MODULE: MOVING DAY INTELLIGENCE (Pizza Suggestion) */}
+      <section>
+         <div className="flex flex-col mb-8">
+            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Moving Day Intelligence</h3>
+            <p className="text-sm text-slate-600 font-medium">Local context to make your first night as owner seamless.</p>
+         </div>
+         
+         <div className="bg-white border border-slate-200 rounded-[32px] p-8 md:p-10 shadow-sm relative overflow-hidden">
+            <div className="flex flex-col md:flex-row items-center gap-8">
+               <div className="w-20 h-20 bg-orange-50 rounded-2xl flex items-center justify-center text-4xl shadow-inner border border-orange-100">
+                  🍕
+               </div>
+               <div className="flex-1 text-center md:text-left">
+                  <h4 className="text-xl font-black text-slate-900 mb-2 tracking-tight">
+                    {isLoadingPizza ? 'Scanning local favorites...' : pizzaRec ? `Moving Night Pick: ${pizzaRec.name}` : 'Local Pizza Recommendation'}
+                  </h4>
+                  <p className="text-sm text-slate-500 font-medium leading-relaxed max-w-xl">
+                    {isLoadingPizza 
+                      ? 'Our intelligence engine is querying local data to find the perfect meal for your first night in Powell.' 
+                      : pizzaRec ? pizzaRec.description : 'Welcome to the neighborhood! We recommend a high-quality local slice to celebrate your new home.'}
+                  </p>
+                  {pizzaRec?.url && (
+                    <a 
+                      href={pizzaRec.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 mt-4 text-[10px] font-black text-blue-600 uppercase tracking-widest border-b-2 border-blue-600 pb-0.5 hover:text-blue-800 hover:border-blue-800 transition-all"
+                    >
+                      View on Maps
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                    </a>
+                  )}
+               </div>
+            </div>
+            <div className="absolute top-0 right-0 p-4">
+               <span className="text-[8px] font-black text-slate-300 bg-slate-50 px-2 py-0.5 rounded uppercase tracking-tighter">Verified Local Logic</span>
+            </div>
+         </div>
       </section>
 
       {/* MODULE 3: VERIFIED EQUITY REVIEW & CAPITAL ACCESS */}
